@@ -2,19 +2,23 @@
 <html>
 <head>
   <title>Alan Frisbee - Official Website</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       background-color: black;
       color: #B2FFFF;
       font-family: Verdana, Arial, sans-serif;
       text-align: center;
+      margin: 0;
+      padding: 0;
     }
     .container {
-      width: 800px;
+      max-width: 800px;
       margin: 0 auto;
       background-color: #111;
       padding: 20px;
       border: 2px solid #00FFFF;
+      box-sizing: border-box;
     }
     h1 {
       font-size: 36px;
@@ -23,12 +27,16 @@
     }
     nav {
       margin: 20px 0;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
     }
     nav a {
       color: #FFFF00;
-      margin: 0 10px;
       text-decoration: underline;
       font-weight: bold;
+      font-size: 16px;
     }
     .marquee {
       color: #FF66FF;
@@ -36,7 +44,8 @@
       margin: 20px 0;
     }
     .profile-pic {
-      width: 200px;
+      width: 100%;
+      max-width: 200px;
       height: auto;
       border: 2px solid #00FFFF;
     }
@@ -70,21 +79,18 @@
       margin: 10px auto;
       width: 100%;
       max-width: 400px;
-      max-height: 150px;
       border: 2px solid #00FFFF;
       background-color: #111;
       padding: 5px;
       border-radius: 5px;
     }
-
-    /* Signal Bender Knobs Styles */
     .knob-control {
       margin: 20px auto;
-      width: 300px;
+      max-width: 300px;
       color: #66FFFF;
       text-shadow: 1px 1px #000;
+      text-align: left;
     }
-
     .knob-control label {
       display: block;
       margin-bottom: 5px;
@@ -92,7 +98,6 @@
       font-family: 'Courier New', monospace;
       font-size: 14px;
     }
-
     .knob-control input[type=range] {
       -webkit-appearance: none;
       width: 100%;
@@ -102,18 +107,7 @@
       border-radius: 10px;
       outline: none;
     }
-
-    .knob-control input[type=range]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 20px;
-      height: 20px;
-      background: #FF00FF;
-      border: 2px solid #00FFFF;
-      border-radius: 50%;
-      cursor: pointer;
-    }
-
+    .knob-control input[type=range]::-webkit-slider-thumb,
     .knob-control input[type=range]::-moz-range-thumb {
       width: 20px;
       height: 20px;
@@ -122,7 +116,6 @@
       border-radius: 50%;
       cursor: pointer;
     }
-
     .tone-button {
       margin-top: 20px;
       padding: 10px 20px;
@@ -133,130 +126,78 @@
       color: black;
       cursor: pointer;
     }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 28px;
+      }
+      nav a {
+        display: block;
+        margin: 5px 0;
+      }
+      .section {
+        padding: 15px;
+      }
+      .tone-button {
+        width: 100%;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Alan Frisbee</h1>
-    <div class="marquee"><marquee>Welcome to the official Alan Frisbee experience!</marquee></div>
     <nav>
-      <a href="#">Home</a>
-      <a href="bio.html">Bio</a>
-      <a href="discography.html">Discography</a>
-      <a href="#">Photos</a>
-      <a href="#">News</a>
+      <a href="#music">Music</a>
+      <a href="#books">Books</a>
+      <a href="#bio">Biography</a>
+      <a href="#contact">Contact</a>
     </nav>
-    <img src="images/frisbee_90s.png" alt="Sir Alan Frisbee" class="profile-pic"><br><br>
-    <p><strong>This is your exclusive source for Frisbee news, music, and memories.</strong></p>
-    <p>Stay tuned as we rebuild the Frisbee Nation—brick by rocking brick.</p>
 
+    <div class="marquee">Welcome to the neon-saturated sound dimension of Alan Frisbee.</div>
 
-    <!-- Gear Graveyard Section -->
-    <div class="section">
-      <h2>Gear Graveyard</h2>
-      <p>A rotating tribute to the synths and samplers that died for Alan's sins.</p>
-      <ul style="list-style: none; padding: 0; color: #CCCCCC;">
-        <li>— Roland SP-404 (Caught fire during the '99 Sunburn Set)</li>
-        <li>— Yamaha DX7 (Last seen floating in a koi pond)</li>
-        <li>— Korg M1 (Sacrificed during a soundbath accident in Sedona)</li>
-      </ul>
-    </div>
+    <img src="alan-frisbee.jpg" alt="Alan Frisbee" class="profile-pic">
 
-    <!-- Alan Says Section -->
-    <div class="section">
-      <h2>Alan Says</h2>
-      <div class="quote-box" id="quoteBox">"Sometimes you have to detune to retune."</div>
-      <button onclick="generateQuote()" style="margin-top:10px; padding: 6px 12px; background-color:#00FFFF; border:none; color:black; font-weight:bold;">New Quote</button>
-    </div>
-
-    <!-- Book Excerpt Section -->
-    <div class="section">
-      <h2>Excerpt from <em>The Alan Frequency</em> (1993)</h2>
-      <div class="book-excerpt">
-        “When I tuned my bones to 432hz, I stopped hearing the lies of society and started hearing the whispers of Saturn. This book is a guide, a warning, and a weapon.”
-      </div>
-    </div>
-
-        <!-- Alan's Signal Bender Knobs Section -->
-    <div class="section">
-      <h2>Alan’s Signal Bender</h2>
-      <p>Twist the knobs. Hear the cosmos.</p>
-      <div class="knob-control">
-        <label for="frequency">Frequency</label>
-        <input type="range" id="frequency" min="100" max="2000" value="440">
-      </div>
-      <div class="knob-control">
-        <label for="volume">Volume</label>
-        <input type="range" id="volume" min="0" max="1" step="0.01" value="0.5">
-      </div>
-      <button onclick="toggleTone()" class="tone-button">Start Signal</button>
-
-      <!-- Audio Player Added Here -->
+    <div class="section" id="music">
+      <h2>Music</h2>
+      <p>Alan Frisbee's music is a blend of retro synth and modern storytelling. Explore selected tracks below:</p>
       <audio controls>
-        <source src="audio/sample.mp3" type="audio/mpeg">
+        <source src="track1.mp3" type="audio/mpeg">
         Your browser does not support the audio element.
       </audio>
+      <audio controls>
+        <source src="track2.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+      </audio>
+
+      <div class="knob-control">
+        <label for="tone">Adjust Tone:</label>
+        <input type="range" id="tone" name="tone" min="1" max="10" value="5">
+      </div>
+      <button class="tone-button" onclick="alert('Tone adjusted!')">Set Tone</button>
+    </div>
+
+    <div class="section" id="books">
+      <h2>Books</h2>
+      <p>Alan's latest novel, <strong>"Synthetic Dusk"</strong>, is now available. Here's an excerpt:</p>
+      <div class="book-excerpt">
+        "The city never slept. Neither did the dreams of machines..."
+      </div>
+    </div>
+
+    <div class="section" id="bio">
+      <h2>Biography</h2>
+      <p>Alan Frisbee is a multi-dimensional artist with a flair for the nostalgic future. When he's not making music or writing, he enjoys rewiring cassette players and drawing schematics of alternate realities.</p>
+    </div>
+
+    <div class="section" id="contact">
+      <h2>Contact</h2>
+      <p>Email: <a href="mailto:contact@alanfrisbee.com">contact@alanfrisbee.com</a></p>
     </div>
 
     <footer>
-      <p>Hit counter: <span style="color: white;">[000042]</span></p>
-      <p>Last updated: April 17, 2025</p>
+      &copy; 2025 Alan Frisbee. All rights reserved.
     </footer>
   </div>
-
-  <script>
-    const quotes = [
-      '"Sometimes you have to detune to retune."',
-      '"Time is a loop pedal with a dead battery."',
-      '"432hz isn’t just a frequency—it’s a frequency *of truth*."',
-      '"Music is the only vitamin I take."',
-      '"I once played a show entirely through a broken baby monitor."'
-    ];
-    function generateQuote() {
-      const quoteBox = document.getElementById("quoteBox");
-      quoteBox.innerText = quotes[Math.floor(Math.random() * quotes.length)];
-    }
-
-    let context = null;
-    let oscillator = null;
-    let gainNode = null;
-    let isPlaying = false;
-
-    function toggleTone() {
-      if (!context) {
-        context = new (window.AudioContext || window.webkitAudioContext)();
-      }
-
-      if (isPlaying) {
-        oscillator.stop();
-        oscillator.disconnect();
-        gainNode.disconnect();
-        isPlaying = false;
-        document.querySelector('.tone-button').innerText = 'Start Signal';
-      } else {
-        oscillator = context.createOscillator();
-        gainNode = context.createGain();
-
-        oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(document.getElementById('frequency').value, context.currentTime);
-        gainNode.gain.setValueAtTime(document.getElementById('volume').value, context.currentTime);
-
-        oscillator.connect(gainNode);
-        gainNode.connect(context.destination);
-        oscillator.start();
-
-        isPlaying = true;
-        document.querySelector('.tone-button').innerText = 'Stop Signal';
-      }
-    }
-
-    document.getElementById('frequency').addEventListener('input', e => {
-      if (oscillator) oscillator.frequency.setValueAtTime(e.target.value, context.currentTime);
-    });
-
-    document.getElementById('volume').addEventListener('input', e => {
-      if (gainNode) gainNode.gain.setValueAtTime(e.target.value, context.currentTime);
-          });
-  </script>
 </body>
 </html>
