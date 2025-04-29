@@ -66,16 +66,73 @@
       color: #666;
     }
     audio {
-  display: block;
-  margin: 10px auto;
-  width: 100%;
-  max-width: 400px;
-  max-height: 150px;
-  border: 2px solid #00FFFF;
-  background-color: #111;
-  padding: 5px;
-  border-radius: 5px;
-}
+      display: block;
+      margin: 10px auto;
+      width: 100%;
+      max-width: 400px;
+      max-height: 150px;
+      border: 2px solid #00FFFF;
+      background-color: #111;
+      padding: 5px;
+      border-radius: 5px;
+    }
+
+    /* Signal Bender Knobs Styles */
+    .knob-control {
+      margin: 20px auto;
+      width: 300px;
+      color: #66FFFF;
+      text-shadow: 1px 1px #000;
+    }
+
+    .knob-control label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+    }
+
+    .knob-control input[type=range] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 20px;
+      background: #111;
+      border: 2px solid #00FFFF;
+      border-radius: 10px;
+      outline: none;
+    }
+
+    .knob-control input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      background: #FF00FF;
+      border: 2px solid #00FFFF;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .knob-control input[type=range]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      background: #FF00FF;
+      border: 2px solid #00FFFF;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .tone-button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #00FFFF;
+      border: none;
+      font-weight: bold;
+      font-family: 'Courier New', monospace;
+      color: black;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -92,17 +149,18 @@
     <img src="images/frisbee_90s.png" alt="Sir Alan Frisbee" class="profile-pic"><br><br>
     <p><strong>This is your exclusive source for Frisbee news, music, and memories.</strong></p>
     <p>Stay tuned as we rebuild the Frisbee Nation—brick by rocking brick.</p>
-    
-    <div class="section">
-  <h2>Sound Sample</h2>
-  <p>Live from the 432hz vortex in Taos, NM:</p>
-  <audio controls>
-    <source src="audio/frisbee_sample.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
-  </audio>
-</div>
 
-    <!-- Gear Graveyard -->
+    <!-- Sound Sample Section -->
+    <div class="section">
+      <h2>Sound Sample</h2>
+      <p>Live from the 432hz vortex in Taos, NM:</p>
+      <audio controls>
+        <source src="audio/frisbee_sample.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+      </audio>
+    </div>
+
+    <!-- Gear Graveyard Section -->
     <div class="section">
       <h2>Gear Graveyard</h2>
       <p>A rotating tribute to the synths and samplers that died for Alan's sins.</p>
@@ -113,19 +171,34 @@
       </ul>
     </div>
 
-    <!-- Alan Says -->
+    <!-- Alan Says Section -->
     <div class="section">
       <h2>Alan Says</h2>
       <div class="quote-box" id="quoteBox">"Sometimes you have to detune to retune."</div>
       <button onclick="generateQuote()" style="margin-top:10px; padding: 6px 12px; background-color:#00FFFF; border:none; color:black; font-weight:bold;">New Quote</button>
     </div>
 
-    <!-- Book Excerpt -->
+    <!-- Book Excerpt Section -->
     <div class="section">
       <h2>Excerpt from <em>The Alan Frequency</em> (1993)</h2>
       <div class="book-excerpt">
         “When I tuned my bones to 432hz, I stopped hearing the lies of society and started hearing the whispers of Saturn. This book is a guide, a warning, and a weapon.”
       </div>
+    </div>
+
+    <!-- Alan's Signal Bender Knobs Section -->
+    <div class="section">
+      <h2>Alan’s Signal Bender</h2>
+      <p>Twist the knobs. Hear the cosmos.</p>
+      <div class="knob-control">
+        <label for="frequency">Frequency</label>
+        <input type="range" id="frequency" min="100" max="2000" value="440">
+      </div>
+      <div class="knob-control">
+        <label for="volume">Volume</label>
+        <input type="range" id="volume" min="0" max="1" step="0.01" value="0.5">
+      </div>
+      <button onclick="toggleTone()" class="tone-button">Start Signal</button>
     </div>
 
     <footer>
@@ -146,6 +219,47 @@
       const quoteBox = document.getElementById("quoteBox");
       quoteBox.innerText = quotes[Math.floor(Math.random() * quotes.length)];
     }
+
+    let context = null;
+    let oscillator = null;
+    let gainNode = null;
+    let isPlaying = false;
+
+    function toggleTone() {
+      if (!context) {
+        context = new (window.AudioContext || window.webkitAudioContext)();
+      }
+
+      if (isPlaying) {
+        oscillator.stop();
+        oscillator.disconnect();
+        gainNode.disconnect();
+        isPlaying = false;
+        document.querySelector('.tone-button').innerText = 'Start Signal';
+      } else {
+        oscillator = context.createOscillator();
+        gainNode = context.createGain();
+
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(document.getElementById('frequency').value, context.currentTime);
+        gainNode.gain.setValueAtTime(document.getElementById('volume').value, context.currentTime);
+
+        oscillator.connect(gainNode);
+        gainNode.connect(context.destination);
+        oscillator.start();
+
+        isPlaying = true;
+        document.querySelector('.tone-button').innerText = 'Stop Signal';
+      }
+    }
+
+    document.getElementById('frequency').addEventListener('input', e => {
+      if (oscillator) oscillator.frequency.setValueAtTime(e.target.value, context.currentTime);
+    });
+
+    document.getElementById('volume').addEventListener('input', e => {
+      if (gainNode) gainNode.gain.setValueAtTime(e.target.value, context.currentTime);
+          });
   </script>
 </body>
 </html>
