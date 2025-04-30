@@ -133,6 +133,54 @@
       color: black;
       cursor: pointer;
     }
+
+  #ambient-loop-grid {
+  font-family: sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #111;
+  color: #eee;
+  padding: 20px;
+  border: 2px dashed #00FFFF;
+  margin-top: 40px;
+}
+#ambient-loop-grid .grid {
+  display: grid;
+  grid-template-columns: repeat(3, 100px);
+  grid-template-rows: repeat(3, 100px);
+  gap: 15px;
+  margin-bottom: 20px;
+}
+#ambient-loop-grid .pad {
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  background-color: #444;
+  transition: transform 0.1s;
+}
+#ambient-loop-grid .pad.active {
+  outline: 2px solid #fff;
+  transform: scale(1.1);
+}
+#ambient-loop-grid .controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+#ambient-loop-grid input[type=range] {
+  width: 200px;
+}
+#ambient-loop-grid button.stop {
+  margin-top: 10px;
+  background: crimson;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
   </style>
 </head>
 <body>
@@ -164,6 +212,16 @@
         “When I tuned my bones to 432hz, I stopped hearing the lies of society and started hearing the whispers of Saturn. This book is a guide, a warning, and a weapon.”
       </div>
     </div>
+
+    <div id="ambient-loop-grid">
+  <h2>Ambient Loop Grid</h2>
+  <div class="grid" id="grid"></div>
+  <div class="controls">
+    <label>Tempo: <input type="range" id="tempo" min="0.5" max="2" step="0.01" value="1"></label>
+    <label>Volume: <input type="range" id="volume" min="0" max="1" step="0.01" value="1"></label>
+    <button class="stop" id="stopAll">STOP</button>
+  </div>
+</div>
 
     <!-- Alan's Signal Bender Knobs Section -->
     <div class="section">
@@ -240,5 +298,67 @@
       if (gainNode) gainNode.gain.setValueAtTime(e.target.value, context.currentTime);
           });
   </script>
+
+  <script>
+  (function () {
+    const loopPaths = [
+      'loop1.mp3', 'loop2.mp3', 'loop3.mp3',
+      'loop4.mp3', 'loop5.mp3', 'loop6.mp3',
+      'loop7.mp3', 'loop8.mp3', 'loop9.mp3'
+    ];
+
+    const grid = document.querySelector('#ambient-loop-grid #grid');
+    const tempoSlider = document.querySelector('#ambient-loop-grid #tempo');
+    const volumeSlider = document.querySelector('#ambient-loop-grid #volume');
+    const stopAllBtn = document.querySelector('#ambient-loop-grid #stopAll');
+
+    const loops = [];
+    const pads = [];
+
+    loopPaths.forEach((src, i) => {
+      const audio = new Audio(src);
+      audio.loop = true;
+      audio.volume = volumeSlider.value;
+      loops.push(audio);
+
+      const pad = document.createElement('button');
+      pad.className = 'pad';
+      pad.style.backgroundColor = `hsl(${i * 40}, 70%, 50%)`;
+
+      pad.addEventListener('click', () => {
+        if (audio.paused) {
+          audio.play();
+          pad.classList.add('active');
+        } else {
+          audio.pause();
+          audio.currentTime = 0;
+          pad.classList.remove('active');
+        }
+      });
+
+      pads.push(pad);
+      grid.appendChild(pad);
+    });
+
+    tempoSlider.addEventListener('input', () => {
+      const rate = parseFloat(tempoSlider.value);
+      loops.forEach(audio => audio.playbackRate = rate);
+    });
+
+    volumeSlider.addEventListener('input', () => {
+      const vol = parseFloat(volumeSlider.value);
+      loops.forEach(audio => audio.volume = vol);
+    });
+
+    stopAllBtn.addEventListener('click', () => {
+      loops.forEach((audio, i) => {
+        audio.pause();
+        audio.currentTime = 0;
+        pads[i].classList.remove('active');
+      });
+    });
+  })();
+</script>
+
 </body>
 </html>
