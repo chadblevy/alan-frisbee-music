@@ -323,7 +323,8 @@
 
       const pad = document.createElement('button');
       pad.className = 'pad';
-      pad.style.backgroundColor = `hsl(${i * 40}, 70%, 50%)`;
+      const colors = ['#00FFFF', '#0000CC', '#53DBC6', '#FFFF00', '#FFFFCC', '#FFC712', '#FF811F', '#FF0033', '#FF6F81'];
+pad.style.backgroundColor = colors[i];
 
       pad.addEventListener('click', () => {
         if (audio.paused) {
