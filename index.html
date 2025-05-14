@@ -181,6 +181,18 @@
   border-radius: 5px;
   cursor: pointer;
 }
+
+ #visualizer-section {
+  text-align: center;
+}
+
+#audioVisualizer {
+  display: block;
+  margin: 10px auto;
+  background-color: #000;
+  border: 2px solid #00FFFF;
+  border-radius: 5px;
+}
   </style>
 </head>
 <body>
@@ -228,6 +240,17 @@ The Alan Frequency.”</p>
     <button class="stop" id="stopAll">STOP</button>
   </div>
 </div></div>
+
+
+<!-- Alan's Visualizer -->
+<div class="section" id="visualizer-section">
+  <h2>Visualizer</h2>
+  <canvas id="audioVisualizer" width="600" height="100"></canvas>
+  <audio id="audioTrack" controls>
+    <source src="your-song.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+</div>
 
     <!-- Alan's Signal Bender Knobs Section -->
     <div class="section">
@@ -366,6 +389,45 @@ pad.style.backgroundColor = colors[i];
     });
   })();
 </script>
+<script>
+  const audio = document.getElementById('audioTrack');
+  const canvas = document.getElementById('audioVisualizer');
+  const ctx = canvas.getContext('2d');
 
+  let audioCtx, analyser, source, dataArray, bufferLength;
+
+  audio.onplay = () => {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      source = audioCtx.createMediaElementSource(audio);
+      analyser = audioCtx.createAnalyser();
+      source.connect(analyser);
+      analyser.connect(audioCtx.destination);
+      analyser.fftSize = 256;
+      bufferLength = analyser.frequencyBinCount;
+      dataArray = new Uint8Array(bufferLength);
+    }
+
+    draw();
+  };
+
+  function draw() {
+    requestAnimationFrame(draw);
+    analyser.getByteFrequencyData(dataArray);
+
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const barWidth = (canvas.width / bufferLength) * 2.5;
+    let x = 0;
+
+    for(let i = 0; i < bufferLength; i++) {
+      const barHeight = dataArray[i];
+      ctx.fillStyle = '#00FFFF';
+      ctx.fillRect(x, canvas.height - barHeight / 2, barWidth, barHeight / 2);
+      x += barWidth + 1;
+    }
+  }
+</script>
 </body>
 </html>
